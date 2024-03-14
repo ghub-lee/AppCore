@@ -7,6 +7,8 @@ BULK_DEALS_FILES_DIR_PATH = './data/bulkdeals/'
 MW_DEALS_FILES_DIR_PATH = './data/marketwatch/'
 INDEX_DATA_FILES_DIR_PATH = './data/index/'
 HISTORICAL_DATA_FILES_DIR_PATH = './data/historical/'
+DATA_DUMP_FILE_PATH = './data/data_dump.json'
+
 
 
 DATE_TIME_FORMAT_STRING = '%Y-%m-%d %H:%M:%S'

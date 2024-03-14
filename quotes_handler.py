@@ -126,14 +126,14 @@ class QuotesHandler:
         # Save the workbook
         wb.save(constants.QUOTE_FILES_DIR_PATH + 'ShortListed.xlsx')
 
-    def get_block_bulk_deal_data(self, period):
+    def get_block_bulk_deal_data(self, period='1Y'):
 
-        block_deals_df = capital_market.block_deals_data(period='1Y')
+        block_deals_df = capital_market.block_deals_data(period=period)
         block_deal_file_str = constants.BLOCK_DEAL_FILES_DIR_PATH + f'{datetime.now().strftime(constants.DATE_INDIAN_FORMAT_STRING)}_block.xlsx'
         block_deals_df.to_excel(block_deal_file_str, index=False)
 
         bulk_deal_file_str = constants.BULK_DEALS_FILES_DIR_PATH + f'{datetime.now().strftime(constants.DATE_INDIAN_FORMAT_STRING)}_bulk.xlsx'
-        bulk_deals_df = capital_market.bulk_deal_data(period='1Y')
+        bulk_deals_df = capital_market.bulk_deal_data(period=period)
         bulk_deals_df.to_excel(bulk_deal_file_str, index=False)
 
     def get_market_watch(self):
