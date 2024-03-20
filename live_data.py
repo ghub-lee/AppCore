@@ -86,6 +86,134 @@ def onopen():
     fyers.keep_running()
 
 
+def onopen():
+    """
+    Callback function to subscribe to data type and symbols upon WebSocket connection.
+
+    """
+    # Specify the data type and symbols you want to subscribe to
+    data_type = "OnOrders"
+    # data_type = "OnTrades"
+    # data_type = "OnPositions"
+    # data_type = "OnGeneral"
+    # data_type = "OnOrders,OnTrades,OnPositions,OnGeneral"
+
+    fyers.subscribe(data_type=data_type)
+
+    # Keep the socket running to receive real-time data
+    fyers.keep_running()
+def onopen():
+    """
+    Callback function to subscribe to data type and symbols upon WebSocket connection.
+
+    """
+    # Specify the data type and symbols you want to subscribe to
+    data_type = "OnTrades"
+
+    # data_type = "OnOrders"
+    # data_type = "OnPositions"
+    # data_type = "OnGeneral"
+    # data_type = "OnOrders,OnTrades,OnPositions,OnGeneral"
+
+    fyers.subscribe(data_type=data_type)
+
+    # Keep the socket running to receive real-time data
+    fyers.keep_running()
+def onopen():
+    """
+    Callback function to subscribe to data type and symbols upon WebSocket connection.
+
+    """
+    # Specify the data type and symbols you want to subscribe to
+    data_type = "OnPositions"
+
+    # data_type = "OnOrders"
+    # data_type = "OnTrades"
+    # data_type = "OnGeneral"
+    # data_type = "OnOrders,OnTrades,OnPositions,OnGeneral"
+
+    fyers.subscribe(data_type=data_type)
+
+    # Keep the socket running to receive real-time data
+    fyers.keep_running()
+def onopen():
+    """
+    Callback function to subscribe to data type and symbols upon WebSocket connection.
+
+    """
+    # Specify the data type and symbols you want to subscribe to
+    # data_type = "OnOrders"
+    # data_type = "OnTrades"
+    # data_type = "OnPositions"
+    # data_type = "OnGeneral"
+    data_type = "OnOrders,OnTrades,OnPositions,OnGeneral"
+
+    fyers.subscribe(data_type=data_type)
+
+    # Keep the socket running to receive real-time data
+    fyers.keep_running()
+def onopen():
+    """
+    Callback function to subscribe to data type and symbols upon WebSocket connection.
+
+    """
+    # Specify the data type and symbols you want to subscribe to
+    data_type = "SymbolUpdate"
+
+    # Subscribe to the specified symbols and data type
+    symbols = ['NSE:SBIN-EQ', 'NSE:ADANIENT-EQ']
+    fyers.subscribe(symbols=symbols, data_type=data_type)
+
+    # Keep the socket running to receive real-time data
+    fyers.keep_running()
+def onopen():
+    """
+    Callback function to subscribe to data type and symbols upon WebSocket connection.
+
+    """
+    # Specify the data type and symbols you want to subscribe to
+    data_type = "SymbolUpdate"
+
+    # Subscribe to the specified symbols and data type
+    symbols = ["NSE:NIFTY50-INDEX" , "NSE:NIFTYBANK-INDEX"]
+    fyers.subscribe(symbols=symbols, data_type=data_type)
+
+    # Keep the socket running to receive real-time data
+    fyers.keep_running()
+def onopen():
+    """
+    Callback function to subscribe to data type and symbols upon WebSocket connection.
+
+    """
+    # Specify the data type and symbols you want to subscribe to
+    data_type = "DepthUpdate"
+
+    # Subscribe to the specified symbols and data type
+    symbols = ['NSE:SBIN-EQ', 'NSE:ADANIENT-EQ']
+    fyers.subscribe(symbols=symbols, data_type=data_type)
+
+    # Keep the socket running to receive real-time data
+    fyers.keep_running()
+
+# LiteMode
+def onopen():
+    """
+    Callback function to subscribe to data type and symbols upon WebSocket connection.
+
+    """
+    # Specify the data type and symbols you want to subscribe to
+    data_type = "SymbolUpdate"
+
+    # Subscribe to the specified symbols and data type
+    symbols = ['NSE:SBIN-EQ', 'NSE:ADANIENT-EQ']
+    fyers.subscribe(symbols=symbols, data_type=data_type)
+
+    # Keep the socket running to receive real-time data
+    fyers.keep_running()
+
+
+
+
 # Replace the sample access token with your actual access token obtained from Fyers
 access_token = access_token_fyers
 
