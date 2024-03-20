@@ -28,9 +28,16 @@ class DataHandler:
 
         local_start_date = None
         if os.path.exists(excel_file):
-            df = pd.read_excel(excel_file)
-            local_start_date = df['Date'].iloc[-1]
-            print(f'File exist for {short_quote_name} with date',local_start_date)
+            try:
+                df = pd.read_excel(excel_file)
+                if not df.empty:
+                    local_start_date = df['Date'].iloc[-1]
+                    print(f'File exist for {short_quote_name} with date',local_start_date)
+
+            except Exception as e:
+                print("Error:", e)
+                return False
+
         else:
             print('Getting last 30 days data')
             man_start_date = datetime.now()-timedelta(days=29)

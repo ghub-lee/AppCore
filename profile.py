@@ -8,7 +8,7 @@ class Profile:
         self.fyers_instance = fyers_login.FyeresLogin().login()
 
     def get_balance(self):
-        self.fyers_instance.
+        self.fyers_instance.holdings()
 
 
 

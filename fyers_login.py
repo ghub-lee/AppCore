@@ -9,14 +9,14 @@ import json
 
 # Client Info (ENTER YOUR OWN INFO HERE!! Data varies from users and app types)
 
-FY_ID = ""
-APP_ID_TYPE = ""
-TOTP_KEY = ""
-PIN = ""
-APP_ID = ""
-REDIRECT_URI = ""
-APP_TYPE = ""
-APP_ID_HASH = ""
+# FY_ID = ""
+# APP_ID_TYPE = ""
+# TOTP_KEY = ""
+# PIN = ""
+# APP_ID = ""
+# REDIRECT_URI = ""
+# APP_TYPE = ""
+# APP_ID_HASH = ""
 
 # API endpoints
 BASE_URL = "https://api-t2.fyers.in/vagator/v2"
@@ -149,26 +149,29 @@ class FyeresLogin:
 
     def __init__(self):
         # step 0 Get credential from json file
+        self.fyers = None
+        self.access_token_only = None
+
         # Specify the path to the JSON file
         json_file_path = '../cred.json'
 
         # Open the JSON file and load its contents into a Python dictionary
         with open(json_file_path, 'r') as json_file:
             data = json.load(json_file)
-            FY_ID = data['FY_ID']
-            APP_ID_TYPE = data['APP_ID_TYPE']
-            TOTP_KEY = data['TOTP_KEY']
-            PIN = data['PIN']
-            APP_ID = data['APP_ID']
-            REDIRECT_URI = data['REDIRECT_URI']
-            APP_TYPE = data['APP_TYPE']
-            APP_ID_HASH = data['APP_ID_HASH']
+            self.FY_ID = data['FY_ID']
+            self.APP_ID_TYPE = data['APP_ID_TYPE']
+            self.TOTP_KEY = data['TOTP_KEY']
+            self.PIN = data['PIN']
+            self.APP_ID = data['APP_ID']
+            self.REDIRECT_URI = data['REDIRECT_URI']
+            self.APP_TYPE = data['APP_TYPE']
+            self.APP_ID_HASH = data['APP_ID_HASH']
     def get_session(self):
         return self.fyers
 
     def login(self):
         # Step 1 - Retrieve request_key from send_login_otp API
-        send_otp_result = self.send_login_otp(fy_id=FY_ID, app_id=APP_ID_TYPE)
+        send_otp_result = self.send_login_otp(fy_id=self.FY_ID, app_id=self.APP_ID_TYPE)
         if send_otp_result[0] != SUCCESS:
             print(f"send_login_otp failure - {send_otp_result[1]}")
             sys.exit()
@@ -176,7 +179,7 @@ class FyeresLogin:
             print("send_login_otp success")
 
         # Step 2 - Generate totp
-        generate_totp_result = self.generate_totp(secret=TOTP_KEY)
+        generate_totp_result = self.generate_totp(secret=self.TOTP_KEY)
         if generate_totp_result[0] != SUCCESS:
             print(f"generate_totp failure - {generate_totp_result[1]}")
             sys.exit()
@@ -195,7 +198,7 @@ class FyeresLogin:
 
         # Step 4 - Verify pin and send back access token
         request_key_2 = verify_totp_result[1]
-        verify_pin_result = self.verify_PIN(request_key=request_key_2, pin=PIN)
+        verify_pin_result = self.verify_PIN(request_key=request_key_2, pin=self.PIN)
         if verify_pin_result[0] != SUCCESS:
             print(f"verify_pin_result failure - {verify_pin_result[1]}")
             sys.exit()
@@ -204,7 +207,7 @@ class FyeresLogin:
 
         # Step 5 - Get auth code for API V2 App from trade access token
         token_result = self.token(
-            fy_id=FY_ID, app_id=APP_ID, redirect_uri=REDIRECT_URI, app_type=APP_TYPE,
+            fy_id=self.FY_ID, app_id=self.APP_ID, redirect_uri=self.REDIRECT_URI, app_type=self.APP_TYPE,
             access_token=verify_pin_result[1]
         )
         if token_result[0] != SUCCESS:
@@ -216,14 +219,14 @@ class FyeresLogin:
         # Step 6 - Get API V2 access token from validating auth code
         auth_code = token_result[1]
         validate_authcode_result = self.validate_authcode(
-            app_id_hash=APP_ID_HASH, auth_code=auth_code
+            app_id_hash=self.APP_ID_HASH, auth_code=auth_code
         )
         if token_result[0] != SUCCESS:
             print(f"validate_authcode failure - {validate_authcode_result[1]}")
             sys.exit()
         else:
             print("validate_authcode success")
-        access_token_only = validate_authcode_result[1]
-        client_id = APP_ID + "-" + APP_TYPE
-        self.fyers = fyersModel.FyersModel(token=access_token_only, is_async=False, client_id=client_id)
-        return self.fyers
+        self.access_token_only = validate_authcode_result[1]
+        client_id = self.APP_ID + "-" + self.APP_TYPE
+        self.fyers = fyersModel.FyersModel(token=self.access_token_only, is_async=False, client_id=client_id)
+        return self.fyers, self.access_token_only
