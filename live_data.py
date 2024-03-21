@@ -1,235 +1,86 @@
-from fyers_apiv3.FyersWebsocket import order_ws
+from fyers_apiv3.FyersWebsocket import data_ws, order_ws
 from AppCore import fyers_login
+
+
 fyers_instance = fyers_login.FyeresLogin()
-
 session, access_token_fyers = fyers_instance.login()
+access_token_pin = fyers_instance.ACCESS_TOKEN_PIN
 
 
-def onTrade(message):
-    """
-    Callback function to handle incoming messages from the FyersDataSocket WebSocket.
+class LiveDataHandler:
 
-    Parameters:
-        message (dict): The received message from the WebSocket.
+    def __init__(self):
+        self.fyers_data_socket = None
 
-    """
-    print("Trade Response:", message)
+        # Replace the sample access token with your actual access token obtained from Fyers
+        access_token_data = fyers_instance.FY_ID+"-"+fyers_instance.APP_TYPE+":"+access_token_fyers
 
+        self.fyers_data_socket = data_ws.FyersDataSocket(
+            access_token=access_token_data,  # Access token in the format "appid:accesstoken"
+            log_path="./data/live_data_log/",
+            # Lite mode disabled
+            # if litemode is true you get only LTP else complete info.
+            litemode=False,
+            write_to_file=True,  # Save response in a log file instead of printing it.
+            reconnect=True,  # Enable auto-reconnection to WebSocket on disconnection.
+            on_connect=self.on_open_data,  # Callback function to subscribe to data upon connection.
+            on_close=self.on_close,  # Callback function to handle WebSocket connection close events.
+            on_error=self.on_error,  # Callback function to handle WebSocket errors.
+            on_message=self.on_message  # Callback function to handle incoming messages from the WebSocket.
+        )
 
-def onOrder(message):
-    """
-    Callback function to handle incoming messages from the FyersDataSocket WebSocket.
+        # Establish a connection to the Fyers WebSocket
+        self.fyers_data_socket.connect()
 
-    Parameters:
-        message (dict): The received message from the WebSocket.
+    def on_open_data(self):
 
-    """
-    print("Order Response:", message)
+        data_type = "SymbolUpdate"
+        # data_type = "DepthUpdate"
 
+        # Subscribe to the specified symbols and data type
+        # you can give index symbols and stock symbols also
+        symbols = ['NSE:SBIN-EQ']
 
-def onPosition(message):
-    """
-    Callback function to handle incoming messages from the FyersDataSocket WebSocket.
+        self.fyers_data_socket.subscribe(symbols=symbols, data_type=data_type)
 
-    Parameters:
-        message (dict): The received message from the WebSocket.
+        # Keep the socket running to receive real-time data
+        self.fyers_data_socket.keep_running()
 
-    """
-    print("Position Response:", message)
+    def on_message(self, message):
+        """
+        Callback function to handle incoming messages from the FyersDataSocket WebSocket.
 
+        Parameters:
+            message (dict): The received message from the WebSocket.
 
-def onGeneral(message):
-    """
-    Callback function to handle incoming messages from the FyersDataSocket WebSocket.
+        """
+        print("Response:", message)
 
-    Parameters:
-        message (dict): The received message from the WebSocket.
+    def on_error(self, message):
+        """
+        Callback function to handle WebSocket errors.
 
-    """
-    print("General Response:", message)
-
-
-def onerror(message):
-    """
-    Callback function to handle WebSocket errors.
-
-    Parameters:
-        message (dict): The error message received from the WebSocket.
-
-
-    """
-    print("Error:", message)
-
-
-def onclose(message):
-    """
-    Callback function to handle WebSocket connection close events.
-    """
-    print("Connection closed:", message)
+        Parameters:
+            message (dict): The error message received from the WebSocket.
 
 
-def onopen():
-    """
-    Callback function to subscribe to data type and symbols upon WebSocket connection.
+        """
+        print("Error:", message)
 
-    """
-    # Specify the data type and symbols you want to subscribe to
-    # data_type = "OnOrders"
-    # data_type = "OnTrades"
-    # data_type = "OnPositions"
-    # data_type = "OnGeneral"
-    data_type = "OnOrders,OnTrades,OnPositions,OnGeneral"
+    def on_reconnect(self, message):
+        """
+        Callback function to handle WebSocket errors.
 
-    fyers.subscribe(data_type=data_type)
-
-    # Keep the socket running to receive real-time data
-    fyers.keep_running()
+        Parameters:
+            message (dict): The error message received from the WebSocket.
 
 
-def onopen():
-    """
-    Callback function to subscribe to data type and symbols upon WebSocket connection.
+        """
+        print("Error:", message)
 
-    """
-    # Specify the data type and symbols you want to subscribe to
-    data_type = "OnOrders"
-    # data_type = "OnTrades"
-    # data_type = "OnPositions"
-    # data_type = "OnGeneral"
-    # data_type = "OnOrders,OnTrades,OnPositions,OnGeneral"
-
-    fyers.subscribe(data_type=data_type)
-
-    # Keep the socket running to receive real-time data
-    fyers.keep_running()
-def onopen():
-    """
-    Callback function to subscribe to data type and symbols upon WebSocket connection.
-
-    """
-    # Specify the data type and symbols you want to subscribe to
-    data_type = "OnTrades"
-
-    # data_type = "OnOrders"
-    # data_type = "OnPositions"
-    # data_type = "OnGeneral"
-    # data_type = "OnOrders,OnTrades,OnPositions,OnGeneral"
-
-    fyers.subscribe(data_type=data_type)
-
-    # Keep the socket running to receive real-time data
-    fyers.keep_running()
-def onopen():
-    """
-    Callback function to subscribe to data type and symbols upon WebSocket connection.
-
-    """
-    # Specify the data type and symbols you want to subscribe to
-    data_type = "OnPositions"
-
-    # data_type = "OnOrders"
-    # data_type = "OnTrades"
-    # data_type = "OnGeneral"
-    # data_type = "OnOrders,OnTrades,OnPositions,OnGeneral"
-
-    fyers.subscribe(data_type=data_type)
-
-    # Keep the socket running to receive real-time data
-    fyers.keep_running()
-def onopen():
-    """
-    Callback function to subscribe to data type and symbols upon WebSocket connection.
-
-    """
-    # Specify the data type and symbols you want to subscribe to
-    # data_type = "OnOrders"
-    # data_type = "OnTrades"
-    # data_type = "OnPositions"
-    # data_type = "OnGeneral"
-    data_type = "OnOrders,OnTrades,OnPositions,OnGeneral"
-
-    fyers.subscribe(data_type=data_type)
-
-    # Keep the socket running to receive real-time data
-    fyers.keep_running()
-def onopen():
-    """
-    Callback function to subscribe to data type and symbols upon WebSocket connection.
-
-    """
-    # Specify the data type and symbols you want to subscribe to
-    data_type = "SymbolUpdate"
-
-    # Subscribe to the specified symbols and data type
-    symbols = ['NSE:SBIN-EQ', 'NSE:ADANIENT-EQ']
-    fyers.subscribe(symbols=symbols, data_type=data_type)
-
-    # Keep the socket running to receive real-time data
-    fyers.keep_running()
-def onopen():
-    """
-    Callback function to subscribe to data type and symbols upon WebSocket connection.
-
-    """
-    # Specify the data type and symbols you want to subscribe to
-    data_type = "SymbolUpdate"
-
-    # Subscribe to the specified symbols and data type
-    symbols = ["NSE:NIFTY50-INDEX" , "NSE:NIFTYBANK-INDEX"]
-    fyers.subscribe(symbols=symbols, data_type=data_type)
-
-    # Keep the socket running to receive real-time data
-    fyers.keep_running()
-def onopen():
-    """
-    Callback function to subscribe to data type and symbols upon WebSocket connection.
-
-    """
-    # Specify the data type and symbols you want to subscribe to
-    data_type = "DepthUpdate"
-
-    # Subscribe to the specified symbols and data type
-    symbols = ['NSE:SBIN-EQ', 'NSE:ADANIENT-EQ']
-    fyers.subscribe(symbols=symbols, data_type=data_type)
-
-    # Keep the socket running to receive real-time data
-    fyers.keep_running()
-
-# LiteMode
-def onopen():
-    """
-    Callback function to subscribe to data type and symbols upon WebSocket connection.
-
-    """
-    # Specify the data type and symbols you want to subscribe to
-    data_type = "SymbolUpdate"
-
-    # Subscribe to the specified symbols and data type
-    symbols = ['NSE:SBIN-EQ', 'NSE:ADANIENT-EQ']
-    fyers.subscribe(symbols=symbols, data_type=data_type)
-
-    # Keep the socket running to receive real-time data
-    fyers.keep_running()
+    def on_close(self, message):
+        print("Connection closed:", message)
 
 
-
-
-# Replace the sample access token with your actual access token obtained from Fyers
-access_token = access_token_fyers
-
-# Create a FyersDataSocket instance with the provided parameters
-fyers = order_ws.FyersOrderSocket(
-    access_token=access_token,  # Your access token for authenticating with the Fyers API.
-    write_to_file=False,  # A boolean flag indicating whether to write data to a log file or not.
-    log_path="./data/live_data_log/",  # The path to the log file if write_to_file is set to True (empty string means current directory).
-    on_connect=onopen,  # Callback function to be executed upon successful WebSocket connection.
-    on_close=onclose,  # Callback function to be executed when the WebSocket connection is closed.
-    on_error=onerror,  # Callback function to handle any WebSocket errors that may occur.
-    on_general=onGeneral,  # Callback function to handle general events from the WebSocket.
-    on_orders=onOrder,  # Callback function to handle order-related events from the WebSocket.
-    on_positions=onPosition,  # Callback function to handle position-related events from the WebSocket.
-    on_trades=onTrade  # Callback function to handle trade-related events from the WebSocket.
-)
-
-# Establish a connection to the Fyers WebSocket
-fyers.connect()
+if __name__ == "__main__":
+    live_data_handler_instance = LiveDataHandler()

@@ -33,6 +33,10 @@ ERROR = -1
 
 class FyeresLogin:
 
+    def __init__(self):
+        self.ACCESS_TOKEN_PIN = None
+        self.ACCESS_TOKEN_AUTH_CODE = None
+
     def send_login_otp(self, fy_id, app_id):
         try:
             payload = {
@@ -45,7 +49,6 @@ class FyeresLogin:
 
             result = json.loads(result_string.text)
             request_key = result["request_key"]
-
             return [SUCCESS, request_key]
 
         except Exception as e:
@@ -90,7 +93,8 @@ class FyeresLogin:
 
             result = json.loads(result_string.text)
             access_token = result["data"]["access_token"]
-
+            self.ACCESS_TOKEN_PIN = access_token
+            print("ACCESS_TOKEN @verify_PIN: ", access_token)
             return [SUCCESS, access_token]
 
         except Exception as e:
@@ -122,6 +126,7 @@ class FyeresLogin:
             result = json.loads(result_string.text)
             url = result["Url"]
             auth_code = parse.parse_qs(parse.urlparse(url).query)['auth_code'][0]
+            print("AUTH_CODE @token: ", auth_code)
 
             return [SUCCESS, auth_code]
 
@@ -141,6 +146,7 @@ class FyeresLogin:
 
             result = json.loads(result_string.text)
             access_token = result["access_token"]
+            print("ACEES_TOKEN @validate_authcode: ", access_token)
 
             return [SUCCESS, access_token]
 
@@ -166,8 +172,12 @@ class FyeresLogin:
             self.REDIRECT_URI = data['REDIRECT_URI']
             self.APP_TYPE = data['APP_TYPE']
             self.APP_ID_HASH = data['APP_ID_HASH']
+
     def get_session(self):
         return self.fyers
+
+    def get_access_token(self):
+        pass
 
     def login(self):
         # Step 1 - Retrieve request_key from send_login_otp API
@@ -226,7 +236,7 @@ class FyeresLogin:
             sys.exit()
         else:
             print("validate_authcode success")
-        self.access_token_only = validate_authcode_result[1]
+        self.ACCESS_TOKEN_AUTH_CODE = validate_authcode_result[1]
         client_id = self.APP_ID + "-" + self.APP_TYPE
         self.fyers = fyersModel.FyersModel(token=self.access_token_only, is_async=False, client_id=client_id)
-        return self.fyers, self.access_token_only
+        return self.fyers, self.ACCESS_TOKEN_AUTH_CODE
