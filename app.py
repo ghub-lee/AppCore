@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     # update_bhav_market_info_copies()
     update_historical_data()
-    # selected_list = quote_handler_instance.get_index_quotes_list()
+    selected_list = quote_handler_instance.get_index_quotes_list()
     # for short_name in selected_list:
     #     thread = threading.Thread(target=data_handler_instance.convert_timeframe(short_name,'1m','15m'))
     #     thread.start()

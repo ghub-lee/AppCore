@@ -91,7 +91,7 @@ class DataHandler:
         dataframe = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
         for index in range(0, df.shape[0], candles_count):
             new_dataframe = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close', 'Volume'])
-            subset_df = df.iloc[index:index + candles_count].reset_index(drop=True)  # Select the first four rows
+            subset_df = df.iloc[index:index + candles_count].reset_index(drop=True)
             new_dataframe.loc[0, 'Date'] = subset_df.loc[0, 'Date']
             new_dataframe.loc[0, 'Open'] = subset_df.loc[0, 'Open']
             new_dataframe.loc[0, 'High'] = subset_df['High'].max(axis=0)
@@ -100,9 +100,8 @@ class DataHandler:
             new_dataframe.loc[0, 'Volume'] = subset_df['Volume'].sum(axis=0)
             dataframe = pd.concat([dataframe.reset_index(drop=True), new_dataframe.reset_index(drop=True)]
                                            ,verify_integrity=True, ignore_index=True)
-        print('**********',short_quote_name)
-        print(dataframe.head())
-        # return dataframe
+        print('**********', short_quote_name)
+        return dataframe
 
     def get_candles_count(self, original_timeframe, intended_timeframe):
 
@@ -113,13 +112,14 @@ class DataHandler:
                 return 15
             if intended_timeframe == '30m':
                 return 30
+            if intended_timeframe == '1d':
+                return 375
 
         if original_timeframe == '15m':
             if intended_timeframe == '1h':
                 return 4
             if intended_timeframe == '30m':
                 return 3
-
 
     def run_strategy(self):
         df = pd.read_excel("./infy.xlsx", index_col=None)
